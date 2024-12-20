@@ -1,78 +1,86 @@
-// A script that generates html content dynamically by data
+import {DescriptionData} from './data/descriptionData.js';
+import {ProjectData} from './data/projectData.js';
 
-import {descriptionBackground, descriptionGameProjects, descriptionGameTools, descriptionOtherProjects} from "./descriptionData.js";
-import {gameProjects, gameTools, otherProjects} from "./projectData.js";
+const EMPTY_STRING = '';
+const EMPTY_SPACE = ' ';
+const LAST_INDEX_OFFSET = 1;
 
-const contentContainer = document.getElementById('content');
-document.addEventListener('DOMContentLoaded', renderContent);
-
-function renderContent() 
+export class Content
 {
-    renderContentDescription(descriptionBackground);
-    renderContentDescription(descriptionGameProjects);
-    renderProjects(gameProjects);
-    renderContentDescription(descriptionGameTools);
-    renderProjects(gameTools);
-    renderContentDescription(descriptionOtherProjects);
-    renderProjects(otherProjects);
-}
-
-function renderContentDescription(description)
-{
-    if (!contentContainer)
+    contentContainer = null;
+    
+    Init()
     {
-        console.error(`Container is undefined.`);
-        return;
+        this.contentContainer = document.getElementById('content');
+        console.log();
+        this.RenderContent();
     }
-
-    contentContainer.innerHTML += createContentDescriptionSection(description.title, description.descriptions);
-}
-
-function renderProjects(projects) 
-{
-    if (!contentContainer) 
+    
+    RenderContent()
     {
-        console.error(`Container is undefined.`);
-        return;
+        this.RenderContentDescription(DescriptionData.Background);
+        this.RenderContentDescription(DescriptionData.GameProjects);
+        this.RenderProjects(ProjectData.Games);
+        this.RenderContentDescription(DescriptionData.GameTools);
+        this.RenderProjects(ProjectData.Tools);
+        this.RenderContentDescription(DescriptionData.OtherProjects);
+        this.RenderProjects(ProjectData.Other);
     }
-
-    projects.forEach(project =>
+    
+    RenderContentDescription(description)
     {
-        contentContainer.innerHTML += createProjectSection(project.imageSrc, project.imageDataSrc, project.title, project.descriptions, project.links);
-    });
-}
-
-function createContentDescriptionSection(title, descriptions)
-{
-    return `
-    <section class="content_description_section">
-        <div class="content_description_title_div">
-            <p class="normal_text"><span class="highlighted_text">${title}</span></p><br>
-        </div>
-        <div class="content_description_text_div">
-            ${descriptions.map((desc, index) => `<p class="normal_text">${desc}</p>${index < descriptions.length - 1 ? '<br><br>' : ''}`).join('')}
-        </div>
-    </section>
-    `;
-}
-
-function createProjectSection(imageSrc, imageDataSrc, title, descriptions, links) 
-{
-    return `            
-        <section class="project_section">
-            <div class="project_empty_div"></div>
-            <section class="project_subsection">
-                <div class="project_image_div">
-                    <img class="project_image lazyload" src="${imageSrc}" data-src="${imageDataSrc}">
-                </div>
-                <div class="project_text_div">
-                    <p class="project_title_text">${title}</p><br>
-                        ${descriptions.map(desc => `<p class="project_text">${desc}</p><br>`).join('')}
-                    <p class="project_text">
-                        ${links.map(link => `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="boxed_hyperlink">${link.text}</a>`).join(' ')}
+        this.contentContainer.innerHTML += this.CreateContentDescriptionSection(description.title, description.descriptions);
+    }
+    
+    RenderProjects(projects)
+    {
+        let projectsHTML = '<section class="project_grid_section">';
+    
+        projects.forEach((projectData, projectDataArrayIndex) =>
+        {
+            projectsHTML += this.CreateProjectSection(projectData, ProjectData.GetArrayId(projects), projectDataArrayIndex);
+        });
+    
+        projectsHTML += '</section>';
+        this.contentContainer.innerHTML += projectsHTML;
+    }
+    
+    CreateContentDescriptionSection(title, descriptions)
+    {
+        return `
+        <section class="content_description_section">
+            <div class="content_description_title_div">
+                <p><span class="highlighted_text">${title}</span></p><br>
+            </div>
+            <div class="content_description_text_div">
+                ${descriptions.map((desc, index) => `<p class="normal_text">${desc}</p>${index < descriptions.length - LAST_INDEX_OFFSET ? '<br>' : EMPTY_STRING}`).join(EMPTY_STRING)}
+            </div>
+        </section>
+        `;
+    }
+    
+    CreateProjectSection(projectData, projectDataArrayId, projectDataArrayIndex)
+    {
+        return `            
+        <section class="project_section" project-data-array-id="${projectDataArrayId}" project-data-array-index="${projectDataArrayIndex}">
+            <div class="project_image_div">
+                <img class="project_image lazyload" src="${projectData.imageSrc}" data-src="${projectData.imageDataSrc}">
+            </div>
+            <div class="project_text_div">
+                <p class="project_title_text">${projectData.title}</p><br>
+                    ${projectData.descriptions.map(desc => `<p class="project_text">${desc}</p><br>`).join(EMPTY_STRING)}
+            </div>        
+                <div class="project_box_div">
+                    <p class="project_development_time_text">
+                        ${projectData.developmentTime}
                     </p>
                 </div>
-            </section>
+            <div class="project_box_div">
+                <p>
+                    ${projectData.tools.map(tool => `<span class="project_box_tool" style="background-color: ${tool.backgroundColor};">${tool.name}</span>`).join(EMPTY_SPACE)}
+                </p>
+            </div>
         </section>
-    `;
+        `;
+    }
 }

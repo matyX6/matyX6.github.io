@@ -1,46 +1,100 @@
-.hyperlink
+:root
 {
-    display: inline-block;
+    --outline-offset-top: -2px;
+    --outline-offset-bottom: -3px;
+    --outline-offset-horizontal: -4px;
+}
+
+.hyperlink 
+{
     position: relative;
+    box-sizing: border-box;
     text-decoration: none;
     font-weight: bold;
     color: orangered;
-    transition: color 0.2s ease;
 }
 
 .hyperlink::before
 {
-    content: "";
+    content: '';
     position: absolute;
-    width: 0%;
-    height: 2px;
-    bottom: -1px;
-    left: 50%;
-    background-color: orangered;
-    transition: width 0.2s ease, left 0.2s ease;
+    top: var(--outline-offset-top);
+    left: var(--outline-offset-horizontal);
+    right: var(--outline-offset-horizontal);
+    bottom: var(--outline-offset-bottom);
+    border: 1px solid transparent;
+    pointer-events: none;
 }
 
-.hyperlink:hover::before
+.hyperlink:hover::before 
 {
-    width: 100%;
-    left: 0;
+    border-color: orangered;
 }
 
-.boxed_hyperlink
+
+.hyperlink_image
 {
+    width: 13px;
+    height: 16px;
+}
+
+.hyperlink_with_image
+{
+    word-spacing: -2px;
+    white-space: nowrap;
     display: inline-block;
-    position: relative;
-    text-decoration: none;
-    color: #808080;
-    padding: 3px 5px 3px 5px;
-    border: 2px solid #808080;
-    border-radius: 3px;
-    margin-top: 10px;
-    margin-right: 5px;
 }
 
-.boxed_hyperlink:hover
+.hyperlink_site_navigation 
 {
-    border: 2px solid orangered;
-    color: orangered;
+    position: relative;
+    color: var(--light-color);
+    text-decoration: none;
+    font-weight: bold;
+    opacity: 15%;
+}
+
+.hyperlink_site_navigation::before
+{
+    content: '';
+    position: absolute;
+    top: var(--outline-offset-top);
+    left: var(--outline-offset-horizontal);
+    right: var(--outline-offset-horizontal);
+    bottom: var(--outline-offset-bottom);
+    border: 1px solid var(--light-color);
+    pointer-events: none;
+}
+
+.hyperlink_site_navigation:hover::before 
+{
+    border-color: var(--light-color);
+}
+
+.hyperlink_site_navigation:hover 
+{
+    opacity: 50%;
+}
+
+.hyperlink_simple
+{
+    word-spacing: -2px;
+    font-size: small;
+    padding-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    text-decoration: none;
+    white-space: nowrap;
+    color: dimgray;
+}
+
+.hyperlink_simple:hover 
+{
+    border-bottom: 1px solid dimgray;
+}
+
+.hyperlink_simple_image
+{
+    width: 9px;
+    height: 12px;
 }
